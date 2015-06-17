@@ -8,7 +8,7 @@ import random
 
 app = Flask(__name__)
 
-@app.route('/fuckoff')
+@app.route('/fuckoff', methods=['GET', 'POST'])
 def fuckoff():
 	name_from = request.values.get('username')
 	text = request.values.get('text')
