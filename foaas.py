@@ -29,6 +29,14 @@ def fuckoff():
 		# if we don't have a target name then we need to skip items that have a name param
 		ops = [ op for op in ops if len([ field for field in op['fields'] if field['field'] == 'name' ]) ]
 
+	# strip out operations that require extra fields
+	basic_ops = []
+	for op in ops:
+		fields = op['fields']
+		field_names = [field['field'] for field in fields]
+		if not len(field_names) or set(field_names) == set(['from']) or set(field_names) == set(['name', 'from']):
+			basic_ops.append(op)
+
 	# pick random op
 	op = random.choice(ops)
 
