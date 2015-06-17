@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 @app.route('/fuckoff', methods=['GET', 'POST'])
 def fuckoff():
-	name_from = request.values.get('username')
+	name_from = request.values.get('user_name')
 	text = request.values.get('text')
 
 	name = re.sub(r"(?i)^fuckoff\s*", "", text)
@@ -22,8 +22,6 @@ def fuckoff():
 	if not name:
 		# if we don't have a target name then we need to skip items that have a name param
 		ops = [ op for op in ops if len([ field for field in op['fields'] if field['field'] == 'name' ]) ]
-
-#	ops = [ op for op in ops if len([ field for field in op['fields'] if field['field'] == 'name' ])
 
 	# pick random op
 	op = random.choice(ops)
