@@ -10,11 +10,17 @@ app = Flask(__name__)
 
 @app.route('/fuckoff', methods=['GET', 'POST'])
 def fuckoff():
+	# trigger warning: trigger word
+	trigger_word = request.values.get('trigger_word')
+
+	# from/dest params
 	name_from = request.values.get('user_name')
 	text = request.values.get('text')
 
-	name = re.sub(r"(?i)^fuckoff\s*", "", text)
+	# strip trigger word
+	name = re.sub(r"(?i)^%s\s*" % trigger_word, "", text)
 
+	# grab available fuckoff operateions
 	ops_r = requests.get('http://foaas.com/operations')
 	ops = json.loads(ops_r.text)
 
@@ -26,7 +32,6 @@ def fuckoff():
 	# pick random op
 	op = random.choice(ops)
 
-	print op
 	url = op['url']
 
 	if name_from:
