@@ -34,7 +34,10 @@ def fuckoff():
 	for op in ops:
 		fields = op['fields']
 		field_names = [field['field'] for field in fields]
-		if not len(field_names) or set(field_names) == set(['from']) or set(field_names) == set(['name', 'from']):
+		# if not len(field_names) or set(field_names) == set(['from']) or set(field_names) == set(['name', 'from']):
+
+		# only allow ones with from/to
+		if set(field_names) == set(['name', 'from']):
 			basic_ops.append(op)
 
 	# pick random op
