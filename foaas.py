@@ -38,7 +38,7 @@ def fuckoff():
 			basic_ops.append(op)
 
 	# pick random op
-	op = random.choice(ops)
+	op = random.choice(basic_ops)
 
 	url = op['url']
 
