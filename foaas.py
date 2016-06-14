@@ -42,7 +42,9 @@ def gen_fuckoff():
     text = request.values.get('text')
 
     # strip trigger word
-    name = re.sub(r"(?i)^%s\s*" % trigger_word, "", text)
+    name = None
+    if trigger_word:
+        name = text.replace(trigger_word, "", 1)
 
     # grab available fuckoff operateions
     ops_r = requests.get('http://foaas.com/operations')
