@@ -19,7 +19,7 @@ def slashcommand():
             'fallback': fo['message'],
             'text': fo['message'],
             'parse': 'none',
-            'mrkdwn_in': []
+            'mrkdwn': False
         }]
     }
 
