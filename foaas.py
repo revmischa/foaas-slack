@@ -8,60 +8,68 @@ import random
 
 app = Flask(__name__)
 
+
+@app.route('/fuckoff_slashcommand', methods=['GET', 'POST'])
+def slashcommand():
+    fo = gen_fuckoff()
+    return fo['message'] + "\n_" + fo['subtitle'] + '_'
+
 @app.route('/fuckoff', methods=['GET', 'POST'])
-def fuckoff():
-	# trigger warning: trigger word
-	trigger_word = request.values.get('trigger_word')
+def webhook():
+    fo = gen_fuckoff()
+    res_text = fo['message'] + "\n_" + fo['subtitle'] + '_'
+    resp = {
+        'text': res_text
+    }
 
-	# from/dest params
-	name_from = request.values.get('user_name')
-	text = request.values.get('text')
+    return json.dumps(resp)
 
-	# strip trigger word
-	name = re.sub(r"(?i)^%s\s*" % trigger_word, "", text)
+def gen_fuckoff():
+    # trigger warning: trigger word
+    trigger_word = request.values.get('trigger_word')
 
-	# grab available fuckoff operateions
-	ops_r = requests.get('http://foaas.com/operations')
-	ops = json.loads(ops_r.text)
+    # from/dest params
+    name_from = request.values.get('user_name')
+    text = request.values.get('text')
 
-	# assemble list of valid ops
-	if not name:
-		# if we don't have a target name then we need to skip items that have a name param
-		ops = [ op for op in ops if len([ field for field in op['fields'] if field['field'] == 'name' ]) ]
+    # strip trigger word
+    name = re.sub(r"(?i)^%s\s*" % trigger_word, "", text)
 
-	# strip out operations that require extra fields
-	basic_ops = []
-	for op in ops:
-		fields = op['fields']
-		field_names = [field['field'] for field in fields]
-		# if not len(field_names) or set(field_names) == set(['from']) or set(field_names) == set(['name', 'from']):
+    # grab available fuckoff operateions
+    ops_r = requests.get('http://foaas.com/operations')
+    ops = json.loads(ops_r.text)
 
-		# only allow ones with from/to
-		if set(field_names) == set(['name', 'from']):
-			basic_ops.append(op)
+    # assemble list of valid ops
+    if not name:
+        # if we don't have a target name then we need to skip items that have a name param
+        ops = [ op for op in ops if len([ field for field in op['fields'] if field['field'] == 'name' ]) ]
 
-	# pick random op
-	op = random.choice(basic_ops)
+    # strip out operations that require extra fields
+    basic_ops = []
+    for op in ops:
+        fields = op['fields']
+        field_names = [field['field'] for field in fields]
+        # if not len(field_names) or set(field_names) == set(['from']) or set(field_names) == set(['name', 'from']):
 
-	url = op['url']
+        # only allow ones with from/to
+        if set(field_names) == set(['name', 'from']):
+            basic_ops.append(op)
 
-	if name_from:
-		url = url.replace(':from', name_from)
+    # pick random op
+    op = random.choice(basic_ops)
 
-	if name:
-		url = url.replace(':name', name)
+    url = op['url']
 
-	# get fuckoff
-	fo_r = requests.get('http://foaas.com%s' % url, headers={ 'Accept': 'application/json' })
-	fo = json.loads(fo_r.text)
+    if name_from:
+        url = url.replace(':from', name_from)
 
-	# slack response
-	res_text = fo['message'] + "\n_" + fo['subtitle'] + '_'
-	resp = {
-		'text': res_text
-	}
+    if name:
+        url = url.replace(':name', name)
 
-	return json.dumps(resp)
+    # get fuckoff
+    fo_r = requests.get('http://foaas.com%s' % url, headers={ 'Accept': 'application/json' })
+    fo = json.loads(fo_r.text)
+    return fo
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=True)
