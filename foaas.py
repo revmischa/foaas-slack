@@ -3,7 +3,6 @@
 from flask import Flask, request, jsonify
 import requests
 import json
-import re
 import random
 
 app = Flask(__name__)
@@ -23,6 +22,7 @@ def slashcommand():
         }]
     })
 
+
 @app.route('/fuckoff', methods=['GET', 'POST'])
 def webhook():
     fo = gen_fuckoff()
@@ -33,6 +33,7 @@ def webhook():
 
     return json.dumps(resp)
 
+
 def gen_fuckoff():
     # trigger warning: trigger word
     trigger_word = request.values.get('trigger_word')
@@ -42,7 +43,7 @@ def gen_fuckoff():
     text = request.values.get('text')
 
     # strip trigger word
-    name = None
+    name = text
     if trigger_word:
         name = text.replace(trigger_word, "", 1)
 
@@ -53,7 +54,7 @@ def gen_fuckoff():
     # assemble list of valid ops
     if not name:
         # if we don't have a target name then we need to skip items that have a name param
-        ops = [ op for op in ops if len([ field for field in op['fields'] if field['field'] == 'name' ]) ]
+        ops = [op for op in ops if len([field for field in op['fields'] if field['field'] == 'name'])]
 
     # strip out operations that require extra fields
     basic_ops = []
