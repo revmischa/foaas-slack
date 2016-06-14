@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import requests
 import json
 import re
@@ -12,7 +12,7 @@ app = Flask(__name__)
 @app.route('/fuckoff_slashcommand', methods=['GET', 'POST'])
 def slashcommand():
     fo = gen_fuckoff()
-    return {
+    return jsonify({
         "response_type": "in_channel",
         "attachments": [{
             'title': fo['subtitle'],
@@ -21,7 +21,7 @@ def slashcommand():
             'parse': 'none',
             'mrkdwn': False
         }]
-    }
+    })
 
 @app.route('/fuckoff', methods=['GET', 'POST'])
 def webhook():
