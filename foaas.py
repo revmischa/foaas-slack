@@ -12,7 +12,16 @@ app = Flask(__name__)
 @app.route('/fuckoff_slashcommand', methods=['GET', 'POST'])
 def slashcommand():
     fo = gen_fuckoff()
-    return fo['message'] + "\n_" + fo['subtitle'] + '_'
+    return {
+        "response_type": "in_channel",
+        "attachments": [{
+            'title': fo['subtitle']
+            'fallback': fo['message'],
+            'text': fo['message'],
+            'parse': 'none',
+            'mrkdwn_in': []
+        }]
+    }
 
 @app.route('/fuckoff', methods=['GET', 'POST'])
 def webhook():
