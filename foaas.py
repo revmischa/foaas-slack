@@ -15,7 +15,7 @@ def slashcommand():
     return {
         "response_type": "in_channel",
         "attachments": [{
-            'title': fo['subtitle']
+            'title': fo['subtitle'],
             'fallback': fo['message'],
             'text': fo['message'],
             'parse': 'none',
